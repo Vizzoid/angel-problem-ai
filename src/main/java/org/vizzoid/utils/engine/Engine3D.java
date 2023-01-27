@@ -108,7 +108,11 @@ public class Engine3D extends JPanel {
         }
     }
 
-    public Position mutate3dTo2d(Position position) {
+    public MoveablePosition mutate3dTo2d(MoveablePosition position) {
+        return projectOntoScreen(position)
+    }
+    
+    public MoveablePosition projectOntoScreen(MoveablePosition position) {
         double x = position.getX();
         double y = position.getY();
         double z = position.getZ() + 3;
@@ -116,12 +120,12 @@ public class Engine3D extends JPanel {
 
         double x2D = (camera.getScalingFactor() * x * aspectRatio) / z;
         double y2D = (camera.getScalingFactor() * y) / z;
+        
+        position.setX((x2D + 1) * center.width); // normalize onto middle of screen being 0, 0
+        position.setY((y2D + 1) * center.height); // normalize onto middle of screen being 0, 0
+        position.setZ((camera.getProjectionMultiplier() * z - camera.getProjectionSubtractive()) / z);
 
-        return new ImmovablePosition(
-                (x2D + 1) * center.width, // normalize onto middle of screen being 0, 0
-                (y2D + 1) * center.height,
-                (camera.getProjectionMultiplier() * z - camera.getProjectionSubtractive()) / z
-        );
+        return position;
     }
 
 }
