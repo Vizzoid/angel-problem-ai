@@ -84,7 +84,7 @@ public class Engine3D extends JPanel {
                         new ImmovablePosition(0, 0, 0),
                         new ImmovablePosition(1, 0, 0)));
 
-        object3DS.addAll(Arrays.asList(cube.getTriangles()));
+        object3DS.add(cube);
     }
 
     public void setDimension(Dimension dimension) {
