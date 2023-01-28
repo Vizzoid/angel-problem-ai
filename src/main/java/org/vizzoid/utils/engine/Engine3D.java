@@ -132,8 +132,8 @@ public class Engine3D extends JPanel {
     /**
      * Mutates position in 3d world into the 2d screen through projection, accounting for rotation, offset and scaled.
      */
-    public MoveablePosition mutate3dTo2d(MoveablePosition position) {
-        return projectOntoScreen(position);
+    public MoveablePosition mutate3dTo2d(Position position) {
+        return projectOntoScreen(position.moveable());
     }
 
     /**
