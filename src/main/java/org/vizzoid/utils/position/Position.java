@@ -60,4 +60,10 @@ public interface Position {
         return Math.sqrt(x * x + y * y + z * z);
     }
 
+    default double dotProduct(Position position) {
+        return getX() * position.getX() +
+                getY() * position.getY() +
+                getZ() * position.getZ();
+    }
+
 }
