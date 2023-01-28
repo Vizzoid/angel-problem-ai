@@ -1,5 +1,7 @@
 package org.vizzoid.utils.engine;
 
+import org.vizzoid.utils.position.MoveablePosition;
+
 /**
  * Camera represents the user's view and from where they can see. It contains multiple settings such as rendering distance, zNear, and fov, but it also includes
  * useful content such as scaling factor and projection calculations which are calculated beforehand to be used repeatedly without unnecessary computation power
@@ -12,6 +14,7 @@ public class Camera {
     private double projectionMultiplier;
     private double projectionSubtractive;
     private double fov;
+    private final MoveablePosition position = new MoveablePosition();
 
     public Camera() {
         this.zNear = 0.1;
@@ -76,4 +79,7 @@ public class Camera {
         return projectionSubtractive;
     }
 
+    public MoveablePosition getPosition() {
+        return position;
+    }
 }
