@@ -16,7 +16,10 @@ import java.util.List;
  * If altering xyz coordinates, must return MoveablePosition and use position.moveable() to convert
  * the position interface accepted into a mutable state. This provides it easily useable for mutation
  * into 3d but also easy use outside of inside Engine3D.
+ * <p>
+ * Modeled after javidx9's 3d engine
  */
+@SuppressWarnings("UnusedReturnValue")
 public class Engine3D extends JPanel {
 
     private final Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -145,15 +148,29 @@ public class Engine3D extends JPanel {
     /**
      * Mutates position in 3d world into the 2d screen through projection, accounting for rotation, offset and scaled.
      */
-    public MoveablePosition mutate3dTo2d(Position position) {
-        MoveablePosition moveable = position.moveable();
-        rotateZ(moveable, theta);
-        rotateX(moveable, theta * 0.5);
-        offset(moveable);
-        projectOntoScreen(moveable);
-        scale(moveable);
+    public MoveablePosition mutate3dTo2d(Position position0) {
+        MoveablePosition position = position0.moveable();
+        prepareProjection(position);
+        completeProjection(position0);
 
-        return moveable;
+        return position;
+    }
+
+    public MoveablePosition prepareProjection(Position position0) {
+        MoveablePosition position = position0.moveable();
+        rotateZ(position, theta);
+        rotateX(position, theta * 0.5);
+        offset(position);
+
+        return position;
+    }
+
+    public MoveablePosition completeProjection(Position position0) {
+        MoveablePosition position = position0.moveable();
+        projectOntoScreen(position);
+        scale(position);
+
+        return position;
     }
 
     /**
