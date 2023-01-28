@@ -97,7 +97,7 @@ public class Engine3D extends JPanel {
 
         //object3DS.add(cube);
         //object3DS.addAll(Arrays.asList(cube.getTriangles()));
-        object3DS.add(Mesh.load(/* file location hidden */));
+        object3DS.add(Mesh.load("D:\\Users\\vtyso\\Downloads\\New Text Document.txt"));
     }
 
     /**
@@ -136,14 +136,14 @@ public class Engine3D extends JPanel {
     @Override
     @SuppressWarnings("ForLoopReplaceableByForEach")
     protected void paintComponent(Graphics g) {
-        clearScreen(g);
         theta += 0.001;
 
         for (int i = 0, object3DSSize = object3DS.size(); i < object3DSSize; i++) {
             Object3D object3D = object3DS.get(i);
             object3D.draw(g, this);
         }
-        //toRaster.sort(Comparator.comparingDouble(ColoredPolygon::midpoint));
+        clearScreen(g);
+        toRaster.sort(Comparator.comparingDouble(ColoredPolygon::midpoint));
         for (int i = 0; i < toRaster.size(); i++) {
             ColoredPolygon polygon = toRaster.get(i);
             polygon.draw(g);
