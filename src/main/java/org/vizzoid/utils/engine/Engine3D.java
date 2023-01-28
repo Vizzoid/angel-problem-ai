@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -30,70 +31,73 @@ public class Engine3D extends JPanel {
     private final JFrame frame = new JFrame();
     private final List<Object3D> object3DS = new ArrayList<>();
     private final Sleeper sleeper = new Sleeper();
+    private final Position lightDirection = new MoveablePosition(0, 0, -1);//.normalize();
+    private final List<ColoredPolygon> toRaster = new ArrayList<>();
 
     public Engine3D(Camera camera) {
         this.camera = camera;
         frame.add(this);
         prepare();
-
+/*
         Mesh cube = new Mesh(
                 new Triangle(
-                        new ImmoveablePosition(0, 0, 0),
-                        new ImmoveablePosition(0, 1, 0),
-                        new ImmoveablePosition(1, 1, 0)),
+                        0, 0, 0,
+                        0, 1, 0,
+                        1, 1, 0),
                 new Triangle(
-                        new ImmoveablePosition(0, 0, 0),
-                        new ImmoveablePosition(1, 1, 0),
-                        new ImmoveablePosition(1, 0, 0)),
+                        0, 0, 0,
+                        1, 1, 0,
+                        1, 0, 0),
 
                 new Triangle(
-                        new ImmoveablePosition(1, 0, 0),
-                        new ImmoveablePosition(1, 1, 0),
-                        new ImmoveablePosition(1, 1, 1)),
+                        1, 0, 0,
+                        1, 1, 0,
+                        1, 1, 1),
                 new Triangle(
-                        new ImmoveablePosition(1, 0, 0),
-                        new ImmoveablePosition(1, 1, 1),
-                        new ImmoveablePosition(1, 0, 1)),
+                        1, 0, 0,
+                        1, 1, 1,
+                        1, 0, 1),
 
                 new Triangle(
-                        new ImmoveablePosition(1, 0, 1),
-                        new ImmoveablePosition(1, 1, 1),
-                        new ImmoveablePosition(0, 1, 1)),
+                        1, 0, 1,
+                        1, 1, 1,
+                        0, 1, 1),
                 new Triangle(
-                        new ImmoveablePosition(1, 0, 1),
-                        new ImmoveablePosition(0, 1, 1),
-                        new ImmoveablePosition(0, 0, 1)),
+                        1, 0, 1,
+                        0, 1, 1,
+                        0, 0, 1),
 
                 new Triangle(
-                        new ImmoveablePosition(0, 0, 1),
-                        new ImmoveablePosition(0, 1, 1),
-                        new ImmoveablePosition(0, 1, 0)),
+                        0, 0, 1,
+                        0, 1, 1,
+                        0, 1, 0),
                 new Triangle(
-                        new ImmoveablePosition(0, 0, 1),
-                        new ImmoveablePosition(0, 1, 0),
-                        new ImmoveablePosition(0, 0, 0)),
+                        0, 0, 1,
+                        0, 1, 0,
+                        0, 0, 0),
 
                 new Triangle(
-                        new ImmoveablePosition(0, 1, 0),
-                        new ImmoveablePosition(0, 1, 1),
-                        new ImmoveablePosition(1, 1, 1)),
+                        0, 1, 0,
+                        0, 1, 1,
+                        1, 1, 1),
                 new Triangle(
-                        new ImmoveablePosition(0, 1, 0),
-                        new ImmoveablePosition(1, 1, 1),
-                        new ImmoveablePosition(1, 1, 0)),
+                        0, 1, 0,
+                        1, 1, 1,
+                        1, 1, 0),
 
                 new Triangle(
-                        new ImmoveablePosition(1, 0, 1),
-                        new ImmoveablePosition(0, 0, 1),
-                        new ImmoveablePosition(0, 0, 0)),
+                        1, 0, 1,
+                        0, 0, 1,
+                        0, 0, 0),
                 new Triangle(
-                        new ImmoveablePosition(1, 0, 1),
-                        new ImmoveablePosition(0, 0, 0),
-                        new ImmoveablePosition(1, 0, 0)));
+                        1, 0, 1,
+                        0, 0, 0,
+                        1, 0, 0));*/
         // mesh is cube test
 
-        object3DS.add(cube);
+        //object3DS.add(cube);
         //object3DS.addAll(Arrays.asList(cube.getTriangles()));
+        object3DS.add(Mesh.load(/* file location hidden */));
     }
 
     /**
@@ -101,10 +105,10 @@ public class Engine3D extends JPanel {
      */
     protected void prepare() {
         setFocusable(true);
-        frame.setUndecorated(true);
+        //frame.setUndecorated(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setDimension(toolkit.getScreenSize());
-        //setDimension(new Dimension(256, 240));
+        //setDimension(toolkit.getScreenSize());
+        setDimension(new Dimension(256 * 4, 240 * 4));
         frame.setVisible(true);
     }
 
@@ -125,25 +129,36 @@ public class Engine3D extends JPanel {
      * example if outside the skybox.
      */
     protected void clearScreen(Graphics g) {
-        g.setColor(Color.WHITE);
+        g.setColor(Color.BLACK);
         g.fillRect(0, 0, dimension.width, dimension.height);
     }
 
     @Override
+    @SuppressWarnings("ForLoopReplaceableByForEach")
     protected void paintComponent(Graphics g) {
         clearScreen(g);
         theta += 0.001;
 
-        g.setColor(Color.BLACK);
-        for (Object3D object3D : object3DS) {
+        for (int i = 0, object3DSSize = object3DS.size(); i < object3DSSize; i++) {
+            Object3D object3D = object3DS.get(i);
             object3D.draw(g, this);
         }
+        //toRaster.sort(Comparator.comparingDouble(ColoredPolygon::midpoint));
+        for (int i = 0; i < toRaster.size(); i++) {
+            ColoredPolygon polygon = toRaster.get(i);
+            polygon.draw(g);
+        }
+        toRaster.clear();
 
         sleeper.sleep();
         repaint();
     }
 
     double theta = 0;
+
+    public void queue(ColoredPolygon polygon) {
+        toRaster.add(polygon);
+    }
 
     /**
      * Mutates position in 3d world into the 2d screen through projection, accounting for rotation, offset and scaled.
@@ -204,7 +219,7 @@ public class Engine3D extends JPanel {
      */
     public MoveablePosition offset(Position position0) {
         MoveablePosition position = position0.moveable();
-        position.moveZ(3);
+        position.moveZ(8);
 
         return position;
     }
@@ -239,6 +254,18 @@ public class Engine3D extends JPanel {
         position.setY((position.getY() + 1) * center.height);
 
         return position;
+    }
+
+    public Camera getCamera() {
+        return camera;
+    }
+
+    public Sleeper getSleeper() {
+        return sleeper;
+    }
+
+    public Position getLightDirection() {
+        return lightDirection;
     }
 
 }
