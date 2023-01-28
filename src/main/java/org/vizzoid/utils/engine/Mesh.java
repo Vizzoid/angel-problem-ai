@@ -1,6 +1,13 @@
 package org.vizzoid.utils.engine;
 
+import org.vizzoid.utils.position.ImmoveablePosition;
+import org.vizzoid.utils.position.MoveablePosition;
+import org.vizzoid.utils.position.Position;
+
 import java.awt.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Mesh is an object composed of several triangles that can form a cube, pyramid, etc.
@@ -23,6 +30,44 @@ public class Mesh implements Object3D {
         for (Triangle triangle : triangles) {
             triangle.draw(graphics, engine);
         }
+    }
+
+    /**
+     * Creates mesh from Blender file
+     */
+    public static Mesh load(String filename) {
+        try (BufferedReader stream = new BufferedReader(new FileReader(filename))) {
+            List<Position> vertexes = new ArrayList<>();
+            List<Triangle> triangles = new ArrayList<>();
+            for (String line; (line = stream.readLine()) != null; ) {
+                switch (line.charAt(0)) {
+                    case 'v' -> {
+                        Position vertex = positionFromString(line);
+                        vertexes.add(vertex);
+                    }
+                    case 'f' -> {
+                        Position position = positionFromString(line);
+                        triangles.add(
+                                new Triangle(
+                                        vertexes.get((int) (position.getX() - 1)),
+                                        vertexes.get((int) (position.getY() - 1)),
+                                        vertexes.get((int) (position.getZ() - 1))));
+                    }
+                }
+            }
+            return new Mesh(triangles.toArray(Triangle[]::new));
+        } catch (Exception ignored) {
+        }
+        return null;
+    }
+
+    private static Position positionFromString(String s) {
+        String[] arr = s.split(" ");
+        return new MoveablePosition(
+                Double.parseDouble(arr[1]),
+                Double.parseDouble(arr[2]),
+                Double.parseDouble(arr[3])
+        );
     }
 
 }
