@@ -7,11 +7,11 @@ import java.awt.*;
 public class ColoredPolygon extends Polygon implements Cloneable {
 
     public Color color = Color.WHITE;
-    public int[] zpoints;
+    public double[] zpoints;
     public FillMode mode = FillMode.OUTLINE;
 
     public ColoredPolygon() {
-        zpoints = new int[4];
+        zpoints = new double[4];
     }
 
     public ColoredPolygon(Position... positions) {
@@ -46,13 +46,13 @@ public class ColoredPolygon extends Polygon implements Cloneable {
         npoints = positions.length;
         xpoints = new int[npoints];
         ypoints = new int[npoints];
-        zpoints = new int[npoints];
+        zpoints = new double[npoints];
 
         for (int i = 0, positionsLength = positions.length; i < positionsLength; i++) {
             Position position = positions[i];
             xpoints[i] = (int) position.getX();
             ypoints[i] = (int) position.getY();
-            zpoints[i] = (int) position.getZ();
+            zpoints[i] = position.getZ();
         }
     }
 
@@ -80,7 +80,7 @@ public class ColoredPolygon extends Polygon implements Cloneable {
 
     public double midpoint() {
         double zSum = 0;
-        for (int zpoint : zpoints) {
+        for (double zpoint : zpoints) {
             zSum += zpoint;
         }
         zSum /= npoints;
