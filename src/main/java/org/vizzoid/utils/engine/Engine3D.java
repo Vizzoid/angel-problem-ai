@@ -1,6 +1,6 @@
 package org.vizzoid.utils.engine;
 
-import org.vizzoid.utils.position.ImmovablePosition;
+import org.vizzoid.utils.position.ImmoveablePosition;
 import org.vizzoid.utils.position.MoveablePosition;
 import org.vizzoid.utils.position.Position;
 
@@ -30,58 +30,58 @@ public class Engine3D extends JPanel {
 
         Mesh cube = new Mesh(
                 new Triangle(
-                        new ImmovablePosition(0, 0, 0),
-                        new ImmovablePosition(0, 1, 0),
-                        new ImmovablePosition(1, 1, 0)),
+                        new ImmoveablePosition(0, 0, 0),
+                        new ImmoveablePosition(0, 1, 0),
+                        new ImmoveablePosition(1, 1, 0)),
                 new Triangle(
-                        new ImmovablePosition(0, 0, 0),
-                        new ImmovablePosition(1, 1, 0),
-                        new ImmovablePosition(1, 0, 0)),
+                        new ImmoveablePosition(0, 0, 0),
+                        new ImmoveablePosition(1, 1, 0),
+                        new ImmoveablePosition(1, 0, 0)),
 
                 new Triangle(
-                        new ImmovablePosition(1, 0, 0),
-                        new ImmovablePosition(1, 1, 0),
-                        new ImmovablePosition(1, 1, 1)),
+                        new ImmoveablePosition(1, 0, 0),
+                        new ImmoveablePosition(1, 1, 0),
+                        new ImmoveablePosition(1, 1, 1)),
                 new Triangle(
-                        new ImmovablePosition(1, 0, 0),
-                        new ImmovablePosition(1, 1, 1),
-                        new ImmovablePosition(1, 0, 1)),
+                        new ImmoveablePosition(1, 0, 0),
+                        new ImmoveablePosition(1, 1, 1),
+                        new ImmoveablePosition(1, 0, 1)),
 
                 new Triangle(
-                        new ImmovablePosition(1, 0, 1),
-                        new ImmovablePosition(1, 1, 1),
-                        new ImmovablePosition(0, 1, 1)),
+                        new ImmoveablePosition(1, 0, 1),
+                        new ImmoveablePosition(1, 1, 1),
+                        new ImmoveablePosition(0, 1, 1)),
                 new Triangle(
-                        new ImmovablePosition(1, 0, 1),
-                        new ImmovablePosition(0, 1, 1),
-                        new ImmovablePosition(0, 0, 1)),
+                        new ImmoveablePosition(1, 0, 1),
+                        new ImmoveablePosition(0, 1, 1),
+                        new ImmoveablePosition(0, 0, 1)),
 
                 new Triangle(
-                        new ImmovablePosition(0, 0, 1),
-                        new ImmovablePosition(0, 1, 1),
-                        new ImmovablePosition(0, 1, 0)),
+                        new ImmoveablePosition(0, 0, 1),
+                        new ImmoveablePosition(0, 1, 1),
+                        new ImmoveablePosition(0, 1, 0)),
                 new Triangle(
-                        new ImmovablePosition(0, 0, 1),
-                        new ImmovablePosition(0, 1, 0),
-                        new ImmovablePosition(0, 0, 0)),
+                        new ImmoveablePosition(0, 0, 1),
+                        new ImmoveablePosition(0, 1, 0),
+                        new ImmoveablePosition(0, 0, 0)),
 
                 new Triangle(
-                        new ImmovablePosition(0, 1, 0),
-                        new ImmovablePosition(0, 1, 1),
-                        new ImmovablePosition(1, 1, 1)),
+                        new ImmoveablePosition(0, 1, 0),
+                        new ImmoveablePosition(0, 1, 1),
+                        new ImmoveablePosition(1, 1, 1)),
                 new Triangle(
-                        new ImmovablePosition(0, 1, 0),
-                        new ImmovablePosition(1, 1, 1),
-                        new ImmovablePosition(1, 1, 0)),
+                        new ImmoveablePosition(0, 1, 0),
+                        new ImmoveablePosition(1, 1, 1),
+                        new ImmoveablePosition(1, 1, 0)),
 
                 new Triangle(
-                        new ImmovablePosition(1, 0, 1),
-                        new ImmovablePosition(0, 0, 1),
-                        new ImmovablePosition(0, 0, 0)),
+                        new ImmoveablePosition(1, 0, 1),
+                        new ImmoveablePosition(0, 0, 1),
+                        new ImmoveablePosition(0, 0, 0)),
                 new Triangle(
-                        new ImmovablePosition(1, 0, 1),
-                        new ImmovablePosition(0, 0, 0),
-                        new ImmovablePosition(1, 0, 0)));
+                        new ImmoveablePosition(1, 0, 1),
+                        new ImmoveablePosition(0, 0, 0),
+                        new ImmoveablePosition(1, 0, 0)));
         // mesh is cube test
 
         object3DS.add(cube);
