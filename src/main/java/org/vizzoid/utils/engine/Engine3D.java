@@ -26,6 +26,7 @@ public class Engine3D extends JPanel {
     private double aspectRatio;
     private final JFrame frame = new JFrame();
     private final List<Object3D> object3DS = new ArrayList<>();
+    private final Sleeper sleeper = new Sleeper();
 
     public Engine3D(Camera camera) {
         this.camera = camera;
@@ -134,6 +135,8 @@ public class Engine3D extends JPanel {
         for (Object3D object3D : object3DS) {
             object3D.draw(g, this);
         }
+
+        sleeper.sleep();
         repaint();
     }
 
