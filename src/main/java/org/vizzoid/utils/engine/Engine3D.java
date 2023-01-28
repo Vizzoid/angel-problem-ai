@@ -11,7 +11,11 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Engine used as screen from converting objects in a world onto the plane (screen)
+ * Engine used as screen from converting objects in a world onto the plane (screen).
+ * All position altering methods must take in a position as the first input and output a position.
+ * If altering xyz coordinates, must return MoveablePosition and use position.moveable() to convert
+ * the position interface accepted into a mutable state. This provides it easily useable for mutation
+ * into 3d but also easy use outside of inside Engine3D.
  */
 public class Engine3D extends JPanel {
 
@@ -85,6 +89,7 @@ public class Engine3D extends JPanel {
         // mesh is cube test
 
         object3DS.add(cube);
+        //object3DS.addAll(Arrays.asList(cube.getTriangles()));
     }
 
     /**
@@ -93,9 +98,10 @@ public class Engine3D extends JPanel {
     protected void prepare() {
         setFocusable(true);
         frame.setUndecorated(true);
-        frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setDimension(toolkit.getScreenSize());
+        //setDimension(new Dimension(256, 240));
+        frame.setVisible(true);
     }
 
     /**
@@ -122,35 +128,95 @@ public class Engine3D extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         clearScreen(g);
+        theta += 0.001;
 
         g.setColor(Color.BLACK);
         for (Object3D object3D : object3DS) {
             object3D.draw(g, this);
         }
+        repaint();
     }
+
+    double theta = 0;
 
     /**
      * Mutates position in 3d world into the 2d screen through projection, accounting for rotation, offset and scaled.
      */
     public MoveablePosition mutate3dTo2d(Position position) {
-        return projectOntoScreen(position.moveable());
+        MoveablePosition moveable = position.moveable();
+        rotateZ(moveable, theta);
+        rotateX(moveable, theta * 0.5);
+        offset(moveable);
+        projectOntoScreen(moveable);
+        scale(moveable);
+
+        return moveable;
     }
 
     /**
-     * Projection matrix
+     * Rotation matrix, moves position akin to z rotation depending on theta
      */
-    public MoveablePosition projectOntoScreen(MoveablePosition position) {
+    public MoveablePosition rotateZ(Position position0, double theta) {
+        MoveablePosition position = position0.moveable();
         double x = position.getX();
         double y = position.getY();
-        double z = position.getZ() + 3;
+        position.setX((x * Math.cos(theta)) + (y * -Math.sin(theta)));
+        position.setY((x * Math.sin(theta)) + (y * Math.cos(theta)));
+
+        return position;
+    }
+
+    /**
+     * Rotation matrix, moves position akin to x rotation depending on theta
+     */
+    public MoveablePosition rotateX(Position position0, double theta) {
+        MoveablePosition position = position0.moveable();
+        double y = position.getY();
+        double z = position.getZ();
+        position.setY((y * Math.cos(theta)) + (z * -Math.sin(theta)));
+        position.setZ((y * Math.sin(theta)) + (z * Math.cos(theta)));
+
+        return position;
+    }
+
+    /**
+     * Offset z onto screen
+     */
+    public MoveablePosition offset(Position position0) {
+        MoveablePosition position = position0.moveable();
+        position.moveZ(3);
+
+        return position;
+    }
+
+    /**
+     * Projection matrix, projects the 3d point onto 2d plane
+     */
+    public MoveablePosition projectOntoScreen(Position position0) {
+        MoveablePosition position = position0.moveable();
+        double x = position.getX();
+        double y = position.getY();
+        double z = position.getZ();
+
+        double x2D = (camera.getScalingFactor() * x * aspectRatio);
+        double y2D = (camera.getScalingFactor() * y);
+        double z2D = (camera.getProjectionMultiplier() * z - camera.getProjectionSubtractive());
+
         if (z == 0) z = 1;
+        position.setX(x2D / z);
+        position.setY(y2D / z);
+        position.setZ(z2D / z);
 
-        double x2D = (camera.getScalingFactor() * x * aspectRatio) / z;
-        double y2D = (camera.getScalingFactor() * y) / z;
+        return position;
+    }
 
-        position.setX((x2D + 1) * center.width); // normalize onto middle of screen being 0, 0
-        position.setY((y2D + 1) * center.height); // normalize onto middle of screen being 0, 0
-        position.setZ((camera.getProjectionMultiplier() * z - camera.getProjectionSubtractive()) / z);
+    /**
+     * Scale x and y by center to view, normalize onto middle of screen being 0, 0
+     */
+    public MoveablePosition scale(Position position0) {
+        MoveablePosition position = position0.moveable();
+        position.setX((position.getX() + 1) * center.width);
+        position.setY((position.getY() + 1) * center.height);
 
         return position;
     }
