@@ -66,4 +66,38 @@ public interface Position {
                 getZ() * position.getZ();
     }
 
+    // movement utility
+
+    default MoveablePosition add(Position position1) {
+        MoveablePosition position = new MoveablePosition();
+        position.setX(getX() + position1.getX());
+        position.setY(getY() + position1.getY());
+        position.setZ(getZ() + position1.getZ());
+        return position;
+    }
+
+    default MoveablePosition subtract(Position position1) {
+        MoveablePosition position = new MoveablePosition();
+        position.setX(getX() - position1.getX());
+        position.setY(getY() - position1.getY());
+        position.setZ(getZ() - position1.getZ());
+        return position;
+    }
+
+    default MoveablePosition multiply(Position position1) {
+        MoveablePosition position = new MoveablePosition();
+        position.setX(getX() * position1.getX());
+        position.setY(getY() * position1.getY());
+        position.setZ(getZ() * position1.getZ());
+        return position;
+    }
+
+    default MoveablePosition divide(Position position1) {
+        MoveablePosition position = new MoveablePosition();
+        position.setX(getX() / position1.getX());
+        position.setY(getY() / position1.getY());
+        position.setZ(getZ() / position1.getZ());
+        return position;
+    }
+
 }
