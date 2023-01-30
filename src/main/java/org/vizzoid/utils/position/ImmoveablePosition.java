@@ -38,4 +38,13 @@ public class ImmoveablePosition implements Position {
     public ImmoveablePosition immoveable() {
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "ImmoveablePosition{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                '}';
+    }
 }
