@@ -77,4 +77,39 @@ public class MoveablePosition implements Position {
     public ImmoveablePosition immoveable() {
         return new ImmoveablePosition(x, y, z);
     }
+
+    // movement utility (changes this object instead of creating new one
+
+    public void addSet(Position position1) {
+        setX(getX() + position1.getX());
+        setY(getY() + position1.getY());
+        setZ(getZ() + position1.getZ());
+    }
+
+    public void subtractSet(Position position1) {
+        setX(getX() - position1.getX());
+        setY(getY() - position1.getY());
+        setZ(getZ() - position1.getZ());
+    }
+
+    public void multiplySet(Position position1) {
+        setX(getX() * position1.getX());
+        setY(getY() * position1.getY());
+        setZ(getZ() * position1.getZ());
+    }
+
+    public void divideSet(Position position1) {
+        setX(getX() / position1.getX());
+        setY(getY() / position1.getY());
+        setZ(getZ() / position1.getZ());
+    }
+
+    @Override
+    public String toString() {
+        return "MoveablePosition{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                '}';
+    }
 }
