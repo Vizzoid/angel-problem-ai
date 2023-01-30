@@ -97,7 +97,7 @@ public class Engine3D extends JPanel {
 
         //object3DS.add(cube);
         //object3DS.addAll(Arrays.asList(cube.getTriangles()));
-        object3DS.add(Mesh.load("D:\\Users\\vtyso\\Downloads\\New Text Document.txt"));
+        object3DS.add(Mesh.load("Ship.txt"));
     }
 
     /**
