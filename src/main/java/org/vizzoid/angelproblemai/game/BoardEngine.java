@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.Random;
@@ -26,8 +27,9 @@ public class BoardEngine implements MouseMotionListener, MouseListener {
     static {
         ClassLoader loader = Main.class.getClassLoader();
         try {
-            URL angelURL = loader.getResource("angel.png");
-            URL devilURL = loader.getResource("devil.png");
+            System.out.println("/src/main/resources/angel.png");
+            File angelURL = new File("/workspaces/angel-problem-ai/src/main/resources/angel.png");
+            File devilURL = new File("/workspaces/angel-problem-ai/src/main/resources/devil.png");
             if (angelURL == null) throw new FileNotFoundException("Angel");
             if (devilURL == null) throw new FileNotFoundException("Devil");
 
@@ -61,7 +63,7 @@ public class BoardEngine implements MouseMotionListener, MouseListener {
         this.internalEngine.addMotionListener(this);
 
         {
-            Dimension dimension = internalEngine.getCenter();
+            Dimension dimension = internalEngine.center;
             double squaresWidthD = (dimension.width - (SQUARE_SIZE * 0.5)) / (double) SQUARE_SIZE;
             double squaresHeightD = (dimension.height - (SQUARE_SIZE * 0.5)) / (double) SQUARE_SIZE;
             int squaresWidthI = (int) squaresWidthD;
@@ -72,7 +74,7 @@ public class BoardEngine implements MouseMotionListener, MouseListener {
         }
         Random r = ThreadLocalRandom.current();
         for (int i = 0; i < 1; i++) {
-            angelProblem.getBoard().mark(r.nextInt(39, 62), r.nextInt(44, 57));
+            angelProblem.getBoard().mark(r.nextInt(62-39) + 39, r.nextInt(57-44) + 44);
         }
     }
 

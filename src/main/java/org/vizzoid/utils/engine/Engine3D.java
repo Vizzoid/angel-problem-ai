@@ -23,7 +23,6 @@ import java.util.List;
 @SuppressWarnings("UnusedReturnValue")
 public class Engine3D extends JPanel {
 
-    private final Toolkit toolkit = Toolkit.getDefaultToolkit();
     private final Camera camera;
     private final Dimension dimension = new Dimension();
     private final Dimension center = new Dimension();
