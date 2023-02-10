@@ -8,7 +8,6 @@ public class MoveablePosition implements Position {
     private double x, y, z;
 
     public MoveablePosition() {
-        this(0, 0, 0);
     }
 
     public MoveablePosition(double x, double y, double z) {

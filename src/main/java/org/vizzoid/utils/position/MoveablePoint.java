@@ -1,5 +1,8 @@
 package org.vizzoid.utils.position;
 
+/**
+ * 2D position that can change without creating new position object with helper functions
+ */
 public class MoveablePoint implements Point {
 
     private double x, y;
@@ -9,7 +12,8 @@ public class MoveablePoint implements Point {
     }
 
     public MoveablePoint(double x, double y) {
-        set(x, y);
+        this.x = x;
+        this.y = y;
     }
 
     @Override
@@ -48,4 +52,43 @@ public class MoveablePoint implements Point {
         moveY(y);
     }
 
+    @Override
+    public MoveablePoint moveable() {
+        return this;
+    }
+
+    @Override
+    public ImmoveablePoint immoveable() {
+        return new ImmoveablePoint(x, y);
+    }
+
+    // movement utility (changes this object instead of creating new one
+
+    public void addSet(Point position1) {
+        setX(getX() + position1.getX());
+        setY(getY() + position1.getY());
+    }
+
+    public void subtractSet(Point position1) {
+        setX(getX() - position1.getX());
+        setY(getY() - position1.getY());
+    }
+
+    public void multiplySet(Point position1) {
+        setX(getX() * position1.getX());
+        setY(getY() * position1.getY());
+    }
+
+    public void divideSet(Point position1) {
+        setX(getX() / position1.getX());
+        setY(getY() / position1.getY());
+    }
+
+    @Override
+    public String toString() {
+        return "MoveablePoint{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }

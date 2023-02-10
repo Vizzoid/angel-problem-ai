@@ -5,6 +5,13 @@ package org.vizzoid.utils.position;
  */
 public interface Position {
 
+    Position UP = new ImmoveablePosition(0, 1, 0);
+    Position DOWN = new ImmoveablePosition(0, -1, 0);
+    Position NORTH = new ImmoveablePosition(1, 0, 0);
+    Position SOUTH = new ImmoveablePosition(-1, 0, 0);
+    Position EAST = new ImmoveablePosition(0, 0, 1);
+    Position WEST = new ImmoveablePosition(0, 0, -1);
+
     double getX();
 
     double getY();
