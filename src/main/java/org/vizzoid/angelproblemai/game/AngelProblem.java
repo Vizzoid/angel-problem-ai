@@ -74,4 +74,8 @@ public class AngelProblem {
     public Endgame getEndgame() {
         return endgame;
     }
+
+    public void setEndgame(Endgame endgame) {
+        this.endgame = endgame;
+    }
 }

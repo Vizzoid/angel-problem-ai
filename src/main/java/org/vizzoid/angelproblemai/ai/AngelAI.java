@@ -18,8 +18,14 @@ public class AngelAI implements MDP<AngelMovement, Integer, DiscreteSpace> {
     private DiscreteSpace space;
     private final AngelSpace observation;
     private final AngelProblem problem;
+    private final DevilPattern pattern;
 
     public AngelAI(AngelProblem problem) {
+        this(problem, DevilPattern.random(problem));
+    }
+
+    public AngelAI(AngelProblem problem, DevilPattern pattern) {
+        this.pattern = pattern;
         this.problem = problem;
         this.angel = problem.getAngel();
         this.observation = new AngelSpace(angel);
@@ -64,16 +70,13 @@ public class AngelAI implements MDP<AngelMovement, Integer, DiscreteSpace> {
         if (!marked) {
             problem.moveAngel(point.getXInt(), point.getYInt());
         }
-        Random r = ThreadLocalRandom.current();
-        problem.getBoard().mark(point.getXInt() + (r.nextInt(angel.getPowerDiameter() + 10) * (r.nextBoolean() ? 1 : -1)), point.getYInt() + (r.nextInt(angel.getPowerDiameter() + 10) * (r.nextBoolean() ? 1 : -1)));
-        /*try {
-            Thread.sleep(1);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }*/
+        pattern.onTurn();
+
         double reward;
         if (problem.getEndgame() == Endgame.DEVIL) {
             reward = -100;
+        } else if (problem.getEndgame() == Endgame.ANGEL) {
+            reward = 100;
         } else if (marked) {
             reward = -1;
         } else {
@@ -94,7 +97,7 @@ public class AngelAI implements MDP<AngelMovement, Integer, DiscreteSpace> {
     }
 
     @Override
-    public MDP<AngelMovement, Integer, DiscreteSpace> newInstance() {
+    public AngelAI newInstance() {
         return new AngelAI(problem);
     }
 }

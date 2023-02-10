@@ -24,39 +24,37 @@ public class Main {
 
     @SuppressWarnings("InfiniteRecursion")
     public static void train() {
-        AngelAI angelAI = new AngelAI(problem);
-        QLearningDiscreteDense<AngelMovement> learning = new QLearningDiscreteDense<>(angelAI,
-                DQNDenseNetworkConfiguration.builder().l2(0.001)
-                        .updater(new RmsProp(0.000025))
-                        .numHiddenNodes(300)
-                        .numLayers(2)
-                        .build(),
-                QLearningConfiguration.builder()
-                        .seed(123L)
-                        .maxEpochStep(200)
-                        .maxStep(15000)
-                        .expRepMaxSize(150000)
-                        .batchSize(128)
-                        .targetDqnUpdateFreq(500)
-                        .updateStart(10)
-                        .rewardFactor(0.01)
-                        .gamma(0.99)
-                        .errorClamp(1.0)
-                        .minEpsilon(0.1f)
-                        .epsilonNbStep(1000)
-                        .doubleDQN(true)
-                        .build());
-        if (new File(AI_FILE).exists()) {
-            try {
+        try {
+            AngelAI angelAI = new AngelAI(problem);
+            QLearningDiscreteDense<AngelMovement> learning = new QLearningDiscreteDense<>(angelAI,
+                    DQNDenseNetworkConfiguration.builder().l2(0.001)
+                            .updater(new RmsProp(0.000025))
+                            .numHiddenNodes(300)
+                            .numLayers(2)
+                            .build(),
+                    QLearningConfiguration.builder()
+                            .seed(123L)
+                            .maxEpochStep(200)
+                            .maxStep(15000)
+                            .expRepMaxSize(150000)
+                            .batchSize(128)
+                            .targetDqnUpdateFreq(500)
+                            .updateStart(10)
+                            .rewardFactor(0.01)
+                            .gamma(0.99)
+                            .errorClamp(1.0)
+                            .minEpsilon(0.1f)
+                            .epsilonNbStep(1000)
+                            .doubleDQN(true)
+                            .build());
+            if (new File(AI_FILE).exists()) {
                 //noinspection unchecked
                 learning.getNeuralNet().copy(DQN.load(AI_FILE));
-            } catch (IOException ignored) {
             }
-        }
-        learning.train();
-        try {
+            learning.train();
             learning.getNeuralNet().save(AI_FILE);
-        } catch (IOException ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         train();

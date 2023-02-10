@@ -1,0 +1,119 @@
+/**
+ * Non-ai counter angel ai movement
+ */
+ public abstract interface DevilPattern {
+
+    private final AngelProblem problem;
+
+    public DevilPattern(AngelProblem problem) {
+        this.problem = problem;
+    }
+
+    public abstract void onTurn();
+
+    public static DevilPattern random(AngelProblem problem) {
+        return new DevilPattern(problem) {
+            
+            public void onTurn() {
+                Random r = ThreadLocalRandom.current();
+                int range = angel.getPowerDiameter() + 10;
+                boolean negative1 = (r.nextBoolean() ? 1 : -1);
+                boolean negative2 = (r.nextBoolean() ? 1 : -1);
+                
+                problem.moveDevil(
+                    point.getXInt() + (r.nextInt(range) * negative1), 
+                    point.getYInt() + (r.nextInt(range) * negative2))
+            }
+
+        };
+    }
+
+    public static DevilPattern encloseStatic(AngelProblem problem, int size) {
+        return encloseStatic(problem, 10);
+    }
+
+    public static DevilPattern encloseStatic(AngelProblem problem, int size) {
+        return new EnclosedDevilPattern(problem, size);
+    }
+
+    private static class EnclosedDevilPattern extends DevilPattern {
+
+        public final double min;
+        public final double max;
+        public double x;
+        public double y;
+        public Stage stage = Stage.ONE;
+
+        public EnclosedDevilPattern(AngelProblem problem, int size) {
+            super(problem);
+            double halfSize = (size * 0.5);
+            int width = problem.getBoard().getWidth();
+            double halfway = (width * 0.5);
+            this.min = halfway - halfSize;
+            this.max = halfway + halfSize;
+
+            this.x = min;
+            this.y = min;
+        }
+
+        public void onTurn() {
+            Point point = problem.getAngel().getPoint();
+            if (point.getX() < min || point.getX() > max || 
+                point.getY() < min || point.getY() > max) {
+                problem.setEndgame(Endgame.ANGEL);
+                return;
+            }
+            problem.moveDevil(x, y);
+
+            stage.accept(this);
+        }
+        
+    }
+
+    private static enum Stage {
+        ONE {
+            public void accept(EnclosedDevilPattern pattern) {
+                if (pattern.y >= pattern.max) {
+                    pattern.stage = Stage.TWO;
+                    pattern.stage.accept(pattern);
+                    return;
+                }
+                pattern.y++;
+            }
+        },
+        TWO {
+            public void accept(EnclosedDevilPattern pattern) {
+                if (pattern.x >= pattern.max) {
+                    pattern.stage = Stage.THREE;
+                    pattern.stage.accept(pattern);
+                    return;
+                }
+                pattern.x++;
+            }
+        },
+        THREE {
+            public void accept(EnclosedDevilPattern pattern) {
+                if (pattern.y <= pattern.min) {
+                    pattern.stage = Stage.FOUR;
+                    pattern.stage.accept(pattern);
+                    return;
+                }
+                pattern.y--;
+                
+            }
+        },
+        FOUR {
+            public void accept(EnclosedDevilPattern pattern) {
+                if (pattern.x <= pattern.min) {
+                    pattern.stage = Stage.ONE;
+                    pattern.problem.setEndgame(Endgame.DEVIL);
+                    return;
+                }
+                pattern.x--;
+            }
+        };
+
+        public abstract void accept(EnclosedDevilPattern pattern);
+    }
+
+ }
