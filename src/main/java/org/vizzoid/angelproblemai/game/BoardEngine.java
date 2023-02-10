@@ -5,16 +5,13 @@ import org.vizzoid.utils.engine.DefaultEngine;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.io.File;
+import java.awt.event.*;
 import java.io.FileNotFoundException;
 import java.net.URL;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
-public class BoardEngine implements MouseMotionListener, MouseListener {
+public class BoardEngine implements MouseMotionListener, MouseListener, KeyListener {
+
+    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(BoardEngine.class.getName());
 
     public static final Color YELLOW_WHITE = new Color(220, 182, 110);
     public static final Color DARK_BROWN = new Color(66, 51, 35);
@@ -27,9 +24,8 @@ public class BoardEngine implements MouseMotionListener, MouseListener {
     static {
         ClassLoader loader = Main.class.getClassLoader();
         try {
-            System.out.println("/src/main/resources/angel.png");
-            File angelURL = new File("/workspaces/angel-problem-ai/src/main/resources/angel.png");
-            File devilURL = new File("/workspaces/angel-problem-ai/src/main/resources/devil.png");
+            URL angelURL = loader.getResource("angel.png");
+            URL devilURL = loader.getResource("devil.png");
             if (angelURL == null) throw new FileNotFoundException("Angel");
             if (devilURL == null) throw new FileNotFoundException("Devil");
 
@@ -61,9 +57,10 @@ public class BoardEngine implements MouseMotionListener, MouseListener {
         this.internalEngine.setPainter(this::paint);
         this.internalEngine.addMouseListener(this);
         this.internalEngine.addMotionListener(this);
+        this.internalEngine.addKeyListener(this);
 
         {
-            Dimension dimension = internalEngine.center;
+            Dimension dimension = internalEngine.getCenter();
             double squaresWidthD = (dimension.width - (SQUARE_SIZE * 0.5)) / (double) SQUARE_SIZE;
             double squaresHeightD = (dimension.height - (SQUARE_SIZE * 0.5)) / (double) SQUARE_SIZE;
             int squaresWidthI = (int) squaresWidthD;
@@ -72,10 +69,21 @@ public class BoardEngine implements MouseMotionListener, MouseListener {
             this.squaresHalfWidth = squaresWidthI + (squaresWidthI != squaresWidthD ? 1 : 0);
             this.squaresHalfHeight = squaresHeightI + (squaresHeightI != squaresHeightD ? 1 : 0);
         }
-        Random r = ThreadLocalRandom.current();
-        for (int i = 0; i < 1; i++) {
-            angelProblem.getBoard().mark(r.nextInt(62-39) + 39, r.nextInt(57-44) + 44);
-        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
+            System.exit(0);
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
     }
 
     protected void paint(Graphics graphics) {
@@ -83,6 +91,12 @@ public class BoardEngine implements MouseMotionListener, MouseListener {
         drawBoard(graphics);
         drawAngel(graphics);
         drawDevil(graphics);
+
+        if (angelProblem.getEndgame().victory()) {
+            graphics.setFont(new Font(Font.SERIF, Font.BOLD, 200));
+            graphics.drawString("Game Over", 0, internalEngine.center.height);
+        }
+
         internalEngine.setShouldRepaint(true);
     }
 
@@ -193,7 +207,7 @@ public class BoardEngine implements MouseMotionListener, MouseListener {
 
         double xDiff = mouse.getX() - angelPoint.getX();
         double yDiff = mouse.getY() - angelPoint.getY();
-        angelPoint.set(mouse.getX(), mouse.getY());
+        angelProblem.moveAngel(mouse.getXInt(), mouse.getYInt());
         mouse.move(xDiff, yDiff);
     }
 

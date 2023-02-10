@@ -2,18 +2,28 @@ package org.vizzoid.angelproblemai.game;
 
 import org.vizzoid.utils.position.Point;
 
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 public class Board {
 
-    private final boolean[] latice;
+    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(Board.class.getName());
+
+    private volatile boolean[] latice;
     private final int width;
 
     public Board() {
-        this(255);
+        this(32767);
     }
 
     public Board(int width) {
-        latice = new boolean[width * width];
         this.width = width;
+        reset();
+    }
+
+    public void markRandom() {
+        Random r = ThreadLocalRandom.current();
+        mark(r.nextInt(width), r.nextInt(width));
     }
 
     public void mark(Point point) {
@@ -70,5 +80,9 @@ public class Board {
 
     private int toIndex(int x, int y) {
         return (y * width) + x;
+    }
+
+    public void reset() {
+        latice = new boolean[width * width];
     }
 }

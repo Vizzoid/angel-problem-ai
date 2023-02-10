@@ -6,7 +6,15 @@ import org.vizzoid.utils.position.Point;
 public class BoardPoint extends MoveablePoint {
 
     public BoardPoint(Board board) {
-        int middle = board.getWidth() / 2;
+        middle(board);
+    }
+
+    public BoardPoint(int x, int y) {
+        super(x, y);
+    }
+
+    public void middle(Board board) {
+        int middle = (int) (board.getWidth() * 0.5);
         set(middle, middle);
     }
 
