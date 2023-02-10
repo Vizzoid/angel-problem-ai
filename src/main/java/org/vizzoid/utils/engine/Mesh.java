@@ -1,11 +1,11 @@
 package org.vizzoid.utils.engine;
 
-import org.vizzoid.utils.position.ImmoveablePosition;
 import org.vizzoid.utils.position.MoveablePosition;
 import org.vizzoid.utils.position.Position;
 
 import java.awt.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 

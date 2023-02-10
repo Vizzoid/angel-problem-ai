@@ -87,16 +87,13 @@ public class ColoredPolygon extends Polygon implements Cloneable {
         return zSum;
     }
 
-    @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public ColoredPolygon clone() {
-        ColoredPolygon polygon = new ColoredPolygon();
-        polygon.npoints = npoints;
-        polygon.xpoints = xpoints;
-        polygon.ypoints = ypoints;
-        polygon.zpoints = zpoints;
-        polygon.color = color;
-        polygon.mode = mode;
-        return polygon;
+        try {
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return (ColoredPolygon) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

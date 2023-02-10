@@ -1,13 +1,10 @@
 package org.vizzoid.utils.engine;
 
-import org.vizzoid.utils.position.ImmoveablePosition;
 import org.vizzoid.utils.position.MoveablePosition;
 import org.vizzoid.utils.position.Position;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -21,22 +18,19 @@ import java.util.List;
  * Modeled after javidx9's 3d engine
  */
 @SuppressWarnings("UnusedReturnValue")
-public class Engine3D extends JPanel {
+public class Engine3D {
 
     private final Camera camera;
-    private final Dimension dimension = new Dimension();
-    private final Dimension center = new Dimension();
-    private double aspectRatio;
-    private final JFrame frame = new JFrame();
     private final List<Object3D> object3DS = new ArrayList<>();
-    private final Sleeper sleeper = new Sleeper();
     private final Position lightDirection = new MoveablePosition(0, 0, -1);//.normalize();
     private final List<ColoredPolygon> toRaster = new ArrayList<>();
+    private final DefaultEngine internalEngine;
 
     public Engine3D(Camera camera) {
         this.camera = camera;
-        frame.add(this);
-        prepare();
+        internalEngine = new DefaultEngine();
+        internalEngine.setDimension(new Dimension(256 * 4, 240 * 4));
+        internalEngine.setPainter(this::paintComponent);
 /*
         Mesh cube = new Mesh(
                 new Triangle(
@@ -96,64 +90,35 @@ public class Engine3D extends JPanel {
 
         //object3DS.add(cube);
         //object3DS.addAll(Arrays.asList(cube.getTriangles()));
-        object3DS.add(Mesh.load("Ship.txt"));
+        //object3DS.add(Mesh.load("D:\\Users\\vtyso\\Downloads\\New Text Document.txt"));
+        object3DS.add(Mesh.load("D:\\Users\\vtyso\\Downloads\\New Text Document (2).txt"));
     }
 
-    /**
-     * Prepares screen and frame. Should initialize dimension
-     */
-    protected void prepare() {
-        setFocusable(true);
-        //frame.setUndecorated(true);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        //setDimension(toolkit.getScreenSize());
-        setDimension(new Dimension(256 * 4, 240 * 4));
-        frame.setVisible(true);
-    }
-
-    /**
-     * Sets dimension. Should set dimension field and center field, as well as aspect ratio and JFrame size.
-     */
-    public void setDimension(Dimension dimension) {
-        this.dimension.width = dimension.width;
-        this.dimension.height = dimension.height;
-        this.center.width = (int) (dimension.width * 0.5);
-        this.center.height = (int) (dimension.height * 0.5);
-        this.aspectRatio = dimension.width / (double) dimension.height;
-        frame.setSize(dimension);
-    }
-
-    /**
-     * Clears graphics image. Common ways are by wiping the screen with white, others color it in skybox color, such as blue, some can not clear screen at all, for
-     * example if outside the skybox.
-     */
-    protected void clearScreen(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, dimension.width, dimension.height);
-    }
-
-    @Override
     @SuppressWarnings("ForLoopReplaceableByForEach")
     protected void paintComponent(Graphics g) {
         theta += 0.001;
+        sin = Math.sin(theta);
+        cos = Math.cos(theta);
+        sinHalf = Math.sin(theta * 0.5);
+        cosHalf = Math.cos(theta * 0.5);
 
         for (int i = 0, object3DSSize = object3DS.size(); i < object3DSSize; i++) {
             Object3D object3D = object3DS.get(i);
             object3D.draw(g, this);
         }
-        clearScreen(g);
         toRaster.sort(Comparator.comparingDouble(ColoredPolygon::midpoint));
         for (int i = 0; i < toRaster.size(); i++) {
             ColoredPolygon polygon = toRaster.get(i);
             polygon.draw(g);
         }
         toRaster.clear();
-
-        sleeper.sleep();
-        repaint();
     }
 
-    double theta = 0;
+    double theta = 0.001;
+    double sin = 0;
+    double cos = 0;
+    double sinHalf = 0;
+    double cosHalf = 0;
 
     public void queue(ColoredPolygon polygon) {
         toRaster.add(polygon);
@@ -172,8 +137,9 @@ public class Engine3D extends JPanel {
 
     public MoveablePosition prepareProjection(Position position0) {
         MoveablePosition position = position0.moveable();
-        rotateZ(position, theta);
-        rotateX(position, theta * 0.5);
+        //rotateZ(position, theta);
+        //rotateX(position, theta * 0.5);
+        rotate(position, theta);
         offset(position);
 
         return position;
@@ -203,12 +169,49 @@ public class Engine3D extends JPanel {
     /**
      * Rotation matrix, moves position akin to x rotation depending on theta
      */
+    public MoveablePosition rotateY(Position position0, double theta) {
+        MoveablePosition position = position0.moveable();
+        double x = position.getX();
+        double z = position.getZ();
+        position.setX((x * Math.cos(theta)) + (z * Math.sin(theta)));
+        position.setZ((x * -Math.sin(theta)) + (z * Math.cos(theta)));
+
+        return position;
+    }
+
+    /**
+     * Rotation matrix, moves position akin to x rotation depending on theta
+     */
     public MoveablePosition rotateX(Position position0, double theta) {
         MoveablePosition position = position0.moveable();
         double y = position.getY();
         double z = position.getZ();
         position.setY((y * Math.cos(theta)) + (z * -Math.sin(theta)));
         position.setZ((y * Math.sin(theta)) + (z * Math.cos(theta)));
+
+        return position;
+    }
+
+    /**
+     * rotateZ and rotateX
+     */
+    public MoveablePosition rotate(Position position0, double theta) {
+        MoveablePosition position = position0.moveable();
+        double x = position.getX();
+        double y = position.getY();
+        double z = position.getZ();
+
+        //double sin = Math.sin(theta);
+        //double cos = Math.cos(theta);
+
+        //double sinHalf = Math.sin(theta *= 0.5);
+        //double cosHalf = Math.cos(theta);
+
+        double rotY = (x * sin) + (y * cos);
+
+        position.setX((x * cos) + (y * -sin));
+        position.setY((rotY * cosHalf) + (z * -sinHalf));
+        position.setZ((rotY * sinHalf) + (z * cosHalf));
 
         return position;
     }
@@ -232,7 +235,7 @@ public class Engine3D extends JPanel {
         double y = position.getY();
         double z = position.getZ();
 
-        double x2D = (camera.getScalingFactor() * x * aspectRatio);
+        double x2D = (camera.getScalingFactor() * x * internalEngine.getAspectRatio());
         double y2D = (camera.getScalingFactor() * y);
         double z2D = (camera.getProjectionMultiplier() * z - camera.getProjectionSubtractive());
 
@@ -249,18 +252,14 @@ public class Engine3D extends JPanel {
      */
     public MoveablePosition scale(Position position0) {
         MoveablePosition position = position0.moveable();
-        position.setX((position.getX() + 1) * center.width);
-        position.setY((position.getY() + 1) * center.height);
+        position.setX((position.getX() + 1) * internalEngine.getCenter().width);
+        position.setY((position.getY() + 1) * internalEngine.getCenter().height);
 
         return position;
     }
 
     public Camera getCamera() {
         return camera;
-    }
-
-    public Sleeper getSleeper() {
-        return sleeper;
     }
 
     public Position getLightDirection() {

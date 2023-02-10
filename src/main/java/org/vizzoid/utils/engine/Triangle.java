@@ -5,7 +5,6 @@ import org.vizzoid.utils.position.ImmoveablePosition;
 import org.vizzoid.utils.position.Position;
 
 import java.awt.*;
-import java.util.Arrays;
 
 /**
  * 3 pointed 3d object triangle
